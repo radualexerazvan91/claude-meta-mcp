@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] — security hardening
+
+### Security
+- **URL downloads are guarded** (`src/lib/safe-fetch.ts`): media URLs passed to the upload tools must be `https://`, must resolve only to public internet addresses (no localhost, private networks or cloud metadata endpoints), every redirect is re-checked, and downloads are capped at 200 MB.
+- **Bearer token check is constant-time**, and `AUTH_TOKEN` must be at least 32 characters.
+- **`HOST` now defaults to `127.0.0.1`** (also in `.env.example`), so the plain-HTTP port is not exposed unless you opt in.
+- **Budget confirmation gap closed**: an update that sets a daily or lifetime budget on a campaign / ad set that had none of that kind now also needs `confirm_budget_increase=true`.
+- Dependencies updated via `npm audit fix` (axios, @modelcontextprotocol/sdk, express sub-dependencies and others).
+
 ## [0.6.0] — 2026-10-04
 
 Files finally get into the connector: from a ChatGPT attachment, from a built-in upload page, or from a URL — and out again as stable public asset URLs.

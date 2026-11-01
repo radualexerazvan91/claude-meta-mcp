@@ -44,6 +44,16 @@ test("creating a new object only checks the cap", () => {
   );
 });
 
+test("an update that adds a budget the object did not have needs confirmation", () => {
+  assert.throws(
+    () => assertBudgetChangeAllowed({ kind: "daily", requestedCents: 5000, confirm: false, isUpdate: true }),
+    /confirm_budget_increase=true/
+  );
+  assert.doesNotThrow(() =>
+    assertBudgetChangeAllowed({ kind: "daily", requestedCents: 5000, confirm: true, isUpdate: true })
+  );
+});
+
 test("parseCents accepts Graph's string budgets", () => {
   assert.equal(parseCents("1500"), 1500);
   assert.equal(parseCents(1500), 1500);

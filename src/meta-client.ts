@@ -6,6 +6,7 @@
  */
 
 import axios, { AxiosError, AxiosInstance } from "axios";
+import { safeDownload } from "./lib/safe-fetch.js";
 
 export interface MetaErrorPayload {
   message: string;
@@ -197,12 +198,8 @@ export class MetaClient {
    */
   async fetchAsBlob(input: { url?: string; data_base64?: string; mime?: string; filename?: string }): Promise<Blob> {
     if (input.url) {
-      const res = await fetch(input.url);
-      if (!res.ok) {
-        throw new Error(`Failed to download asset (${res.status} ${res.statusText}) from ${input.url}`);
-      }
-      const buf = await res.arrayBuffer();
-      const type = input.mime ?? res.headers.get("content-type") ?? "application/octet-stream";
+      const { bytes: buf, contentType } = await safeDownload(input.url);
+      const type = input.mime ?? contentType ?? "application/octet-stream";
       const blob = new Blob([buf], { type });
       Object.assign(blob, { name: input.filename ?? "upload.bin" });
       return blob;

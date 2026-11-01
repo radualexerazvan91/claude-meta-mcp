@@ -32,8 +32,12 @@ function optionalInt(name: string): number | undefined {
 
 export const config = {
   port: parseInt(optional("PORT", "3210"), 10),
-  /** Interface to bind. Use 127.0.0.1 when a local reverse proxy sits in front (recommended). */
-  host: optional("HOST", "0.0.0.0"),
+  /**
+   * Interface to bind. Defaults to loopback so the plain-HTTP port is only
+   * reachable through the local TLS reverse proxy. Set 0.0.0.0 explicitly only
+   * when something else terminates TLS in front of this host.
+   */
+  host: optional("HOST", "127.0.0.1"),
   logLevel: optional("LOG_LEVEL", "info") as
     | "debug"
     | "info"
@@ -48,7 +52,13 @@ export const config = {
    * calling /mcp. In v0.1 (single-tenant), this is a single shared secret.
    * v0.2 will replace this with proper OAuth 2.1 + DCR.
    */
-  authToken: required("AUTH_TOKEN"),
+  authToken: (() => {
+    const token = required("AUTH_TOKEN");
+    if (token.length < 32) {
+      throw new Error("AUTH_TOKEN must be at least 32 characters. Generate one with: openssl rand -hex 32");
+    }
+    return token;
+  })(),
   publicUrl: optional("PUBLIC_URL", "http://localhost:3210"),
   /**
    * Hard budget caps in account-currency cents. Undefined = no cap. Enforced
