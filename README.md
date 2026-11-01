@@ -67,6 +67,30 @@ The server listens on `PORT` (default `3210`) and exposes:
 
 ---
 
+### Local mode for Claude Desktop (no server, no open port)
+
+Claude Desktop can start the connector itself and talk to it over stdin/stdout. Nothing listens on the network and no `AUTH_TOKEN` is needed; only the app that launched the process can reach it. It works only in Claude Desktop on that computer.
+
+Build once (`npm ci && npm run build`), then add this to Claude Desktop's config (Settings → Developer → Edit Config):
+
+```json
+{
+  "mcpServers": {
+    "meta": {
+      "command": "node",
+      "args": ["C:\\Users\\you\\Documents\\claude-meta-mcp\\dist\\index.js", "--stdio"],
+      "env": {
+        "META_ACCESS_TOKEN": "your-system-user-token",
+        "MAX_DAILY_BUDGET_CENTS": "2000",
+        "MAX_LIFETIME_BUDGET_CENTS": "20000"
+      }
+    }
+  }
+}
+```
+
+On macOS the path looks like `/Users/you/claude-meta-mcp/dist/index.js`. Restart Claude Desktop afterwards. The `/upload` page is not available in this mode; use public URLs for media.
+
 ## Available tools
 
 57 tools in v0.6 across four surfaces — Ads (read + write), Facebook Pages (read + write), Instagram Business (read + write), Product Catalogs (read).

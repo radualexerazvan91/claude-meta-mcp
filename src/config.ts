@@ -30,7 +30,15 @@ function optionalInt(name: string): number | undefined {
   return n;
 }
 
+/**
+ * `--stdio` (or MCP_TRANSPORT=stdio): Claude Desktop starts this process itself
+ * and talks to it over stdin/stdout. No HTTP server, no open port, no
+ * AUTH_TOKEN — only the local app that launched the process can reach it.
+ */
+const stdio = process.argv.includes("--stdio") || process.env.MCP_TRANSPORT === "stdio";
+
 export const config = {
+  stdio,
   port: parseInt(optional("PORT", "3210"), 10),
   /**
    * Interface to bind. Defaults to loopback so the plain-HTTP port is only
@@ -53,6 +61,7 @@ export const config = {
    * v0.2 will replace this with proper OAuth 2.1 + DCR.
    */
   authToken: (() => {
+    if (stdio) return "";
     const token = required("AUTH_TOKEN");
     if (token.length < 32) {
       throw new Error("AUTH_TOKEN must be at least 32 characters. Generate one with: openssl rand -hex 32");

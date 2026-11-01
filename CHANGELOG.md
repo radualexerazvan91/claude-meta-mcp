@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] — security hardening
 
+### Added
+- **Local stdio mode** (`node dist/index.js --stdio` or `MCP_TRANSPORT=stdio`) for Claude Desktop: no HTTP listener, no `AUTH_TOKEN` needed. See README → Local mode for Claude Desktop.
+
 ### Security
 - **URL downloads are guarded** (`src/lib/safe-fetch.ts`): media URLs passed to the upload tools must be `https://`, must resolve only to public internet addresses (no localhost, private networks or cloud metadata endpoints), every redirect is re-checked, and downloads are capped at 200 MB.
 - **Bearer token check is constant-time**, and `AUTH_TOKEN` must be at least 32 characters.
