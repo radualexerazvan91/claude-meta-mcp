@@ -14,6 +14,7 @@ import { createHash, timingSafeEqual } from "node:crypto";
 import express, { NextFunction, Request, Response } from "express";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
 import { config } from "./config.js";
 import { MetaClient } from "./meta-client.js";
@@ -86,6 +87,17 @@ async function main(): Promise<void> {
   registerCatalogTools(mcp, meta);
   registerAudienceTools(mcp, meta);
   registerAssetTools(mcp, assets);
+
+  if (config.stdio) {
+    // Local mode for Claude Desktop: stdout carries the MCP protocol, so all
+    // logging stays on stderr (log() already writes there). No HTTP listener.
+    await mcp.connect(new StdioServerTransport());
+    log("info", "claude-meta-mcp running over stdio", {
+      version: VERSION,
+      meta_api_version: config.meta.apiVersion,
+    });
+    return;
+  }
 
   const app = express();
   app.disable("x-powered-by");
