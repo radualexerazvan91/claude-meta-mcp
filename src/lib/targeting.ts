@@ -95,8 +95,8 @@ export const targetingSchema = z
       })
       .passthrough()
       .optional(),
-    flexible_spec: z.array(z.record(z.unknown())).optional(),
-    exclusions: z.record(z.unknown()).optional(),
+    flexible_spec: z.array(z.record(z.string(), z.unknown())).optional(),
+    exclusions: z.record(z.string(), z.unknown()).optional(),
     brand_safety_content_filter_levels: z.array(z.string()).optional(),
   })
   .passthrough()

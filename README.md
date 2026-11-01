@@ -186,10 +186,10 @@ Files that did not come from a public URL are kept in the asset store (`UPLOAD_D
 |---|---|---|---|
 | `META_ACCESS_TOKEN` | yes | — | Meta System User token (recommended, never expires) or long-lived user access token. Full v0.4 scopes: `ads_read`, `ads_management`, `business_management`, `pages_show_list`, `pages_read_engagement`, `pages_manage_posts`, `pages_manage_metadata`, `instagram_basic`, `instagram_content_publish`, `instagram_manage_comments`, `instagram_manage_insights`, `catalog_management`. Subsets are allowed — missing scopes simply make the matching tools return 403. |
 | `META_API_VERSION` | no | `v26.0` | Graph API version |
-| `AUTH_TOKEN` | yes | — | Shared bearer secret for `POST /mcp`. Generate with `openssl rand -hex 32` |
+| `AUTH_TOKEN` | yes | — | Shared bearer secret for `POST /mcp`, at least 32 characters. Generate with `openssl rand -hex 32` |
 | `PUBLIC_URL` | no | `http://localhost:3210` | Public URL (currently informational; v0.2 will use it for OAuth callbacks) |
 | `PORT` | no | `3210` | TCP port to bind |
-| `HOST` | no | `0.0.0.0` | Interface to bind. Use `127.0.0.1` behind a local reverse proxy |
+| `HOST` | no | `127.0.0.1` | Interface to bind. Loopback by default so only the local TLS reverse proxy can reach it; set `0.0.0.0` only if TLS is terminated elsewhere |
 | `UPLOAD_DIR` | no | — | Enables the asset store and `/upload` page; files are stored here and served at `PUBLIC_URL/assets/…` |
 | `UPLOAD_MAX_MB` | no | `100` | Size limit per uploaded file (also raise `client_max_body_size` in the proxy) |
 | `UPLOAD_PAGE_LANG` | no | `en` | `en` or `de` — language of the upload page |

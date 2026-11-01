@@ -10,6 +10,7 @@
  * token. Multi-tenant + OAuth 2.1 + DCR is planned for v0.2.
  */
 
+import { createHash, timingSafeEqual } from "node:crypto";
 import express, { NextFunction, Request, Response } from "express";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
@@ -45,10 +46,18 @@ function log(
   console.error(JSON.stringify(line));
 }
 
+const EXPECTED_TOKEN_DIGEST = createHash("sha256").update(config.authToken).digest();
+
+/** Constant-time comparison: hash both sides so length differences don't leak either. */
+function tokenMatches(candidate: string): boolean {
+  const digest = createHash("sha256").update(candidate).digest();
+  return timingSafeEqual(digest, EXPECTED_TOKEN_DIGEST);
+}
+
 function bearerAuth(req: Request, res: Response, next: NextFunction): void {
   const header = req.header("authorization") ?? "";
   const match = /^Bearer\s+(.+)$/i.exec(header);
-  if (!match || match[1] !== config.authToken) {
+  if (!match || !tokenMatches(match[1])) {
     log("warn", "rejected unauthenticated MCP request", {
       ip: req.ip,
       path: req.path,

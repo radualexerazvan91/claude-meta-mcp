@@ -439,14 +439,14 @@ export function registerWriteTools(server: McpServer, meta: MetaClient, assets?:
         if (daily_budget_cents) {
           assertBudgetChangeAllowed({
             kind: "daily", currentCents: parseCents(current.daily_budget), requestedCents: daily_budget_cents,
-            confirm: Boolean(confirm_budget_increase), capCents: config.limits.maxDailyBudgetCents,
+            confirm: Boolean(confirm_budget_increase), isUpdate: true, capCents: config.limits.maxDailyBudgetCents,
           });
           body.daily_budget = daily_budget_cents;
         }
         if (lifetime_budget_cents) {
           assertBudgetChangeAllowed({
             kind: "lifetime", currentCents: parseCents(current.lifetime_budget), requestedCents: lifetime_budget_cents,
-            confirm: Boolean(confirm_budget_increase), capCents: config.limits.maxLifetimeBudgetCents,
+            confirm: Boolean(confirm_budget_increase), isUpdate: true, capCents: config.limits.maxLifetimeBudgetCents,
           });
           body.lifetime_budget = lifetime_budget_cents;
         }
@@ -611,14 +611,14 @@ export function registerWriteTools(server: McpServer, meta: MetaClient, assets?:
       if (daily_budget_cents) {
         assertBudgetChangeAllowed({
           kind: "daily", currentCents: parseCents(current.daily_budget), requestedCents: daily_budget_cents,
-          confirm: Boolean(confirm_budget_increase), capCents: config.limits.maxDailyBudgetCents,
+          confirm: Boolean(confirm_budget_increase), isUpdate: true, capCents: config.limits.maxDailyBudgetCents,
         });
         body.daily_budget = daily_budget_cents;
       }
       if (lifetime_budget_cents) {
         assertBudgetChangeAllowed({
           kind: "lifetime", currentCents: parseCents(current.lifetime_budget), requestedCents: lifetime_budget_cents,
-          confirm: Boolean(confirm_budget_increase), capCents: config.limits.maxLifetimeBudgetCents,
+          confirm: Boolean(confirm_budget_increase), isUpdate: true, capCents: config.limits.maxLifetimeBudgetCents,
         });
         body.lifetime_budget = lifetime_budget_cents;
       }

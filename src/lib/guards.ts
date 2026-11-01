@@ -12,8 +12,14 @@ export type BudgetKind = "daily" | "lifetime";
 
 export interface BudgetCheck {
   kind: BudgetKind;
-  /** Current budget in cents; undefined when creating a new object. */
+  /** Current budget in cents; undefined when creating a new object or when the object has no budget of this kind yet. */
   currentCents?: number;
+  /**
+   * True when changing an existing object. An update that sets a budget the
+   * object did not have before (currentCents undefined) is treated as an
+   * increase and needs confirmation too.
+   */
+  isUpdate?: boolean;
   requestedCents: number;
   /** The caller passed confirm_budget_increase=true. */
   confirm: boolean;
@@ -55,6 +61,13 @@ export function assertBudgetChangeAllowed(check: BudgetCheck): void {
       `Refused: raising the ${label} budget from ${formatCents(check.currentCents)} to ` +
         `${formatCents(check.requestedCents)} needs explicit approval. Ask the user to confirm the ` +
         "increase, then call again with confirm_budget_increase=true."
+    );
+  }
+
+  if (check.isUpdate && check.currentCents === undefined && !check.confirm) {
+    throw new Error(
+      `Refused: setting a new ${label} budget of ${formatCents(check.requestedCents)} on an object that had none ` +
+        "needs explicit approval. Ask the user to confirm, then call again with confirm_budget_increase=true."
     );
   }
 }
